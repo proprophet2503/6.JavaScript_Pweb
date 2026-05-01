@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Pencarian Kode Pos � ITS</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+background: #f0f4ff;
+color: #1a1a2e;
+min-height: 100vh;
+}
+.topbar {
+background: #1a56db;
+color: white;
+padding: 12px 28px;
+display: flex;
+align-items: center;
+gap: 14px;
+box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+}
+.topbar img { height: 42px; }
+.topbar-text h1  { font-size: 1.05rem; font-weight: 700; }
+.topbar-text span{ font-size: 0.82rem; opacity: 0.85; }
+.topbar-back {
+margin-left: auto;
+color: white;
+text-decoration: none;
+font-size: 0.85rem;
+opacity: .85;
+}
+.topbar-back:hover { opacity: 1; text-decoration: underline; }
+.page { max-width: 760px; margin: 40px auto 60px; padding: 0 20px; }
+.page-title { font-size: 1.3rem; font-weight: 700; color: #1a56db; margin-bottom: 6px; }
+.page-sub   { font-size: 0.85rem; color: #666; margin-bottom: 28px; }
+.main-layout { display: flex; gap: 22px; align-items: flex-start; flex-wrap: wrap; }
+.col-form   { flex: 1; min-width: 280px; }
+.col-result { flex: 1; min-width: 260px; }
+.card {
+background: white;
+border: 1.5px solid #d0dff5;
+border-radius: 10px;
+padding: 24px 22px;
+}
+.card-title {
+font-size: 0.92rem;
+font-weight: 700;
+color: #1a56db;
+margin-bottom: 18px;
+padding-bottom: 10px;
+border-bottom: 1.5px solid #e5eaf5;
+}
+.form-group { margin-bottom: 16px; }
+label {
+display: block;
+font-size: 0.84rem;
+font-weight: 600;
+color: #333;
+margin-bottom: 5px;
+}
+select {
+width: 100%;
+padding: 9px 12px;
+border: 1.5px solid #c5d5f0;
+border-radius: 6px;
+font-size: 0.88rem;
+color: #1a1a2e;
+background: white;
+outline: none;
+transition: border-color .2s;
+cursor: pointer;
+}
+select:focus { border-color: #1a56db; }
+select:disabled { background: #f5f8ff; color: #999; cursor: not-allowed; }
+.btn {
+width: 100%;
+padding: 10px;
+background: #1a56db;
+color: white;
+border: none;
+border-radius: 6px;
+font-size: 0.9rem;
+font-weight: 600;
+cursor: pointer;
+margin-top: 6px;
+transition: background .2s;
+}
+.btn:hover:not(:disabled) { background: #1346b8; }
+.btn:disabled { background: #a0b8e8; cursor: not-allowed; }
+.btn-outline {
+background: white;
+color: #1a56db;
+border: 1.5px solid #1a56db;
+margin-top: 8px;
+}
+.btn-outline:hover { background: #e8f0fe; }
+.spinner-wrap { text-align: center; padding: 16px 0; color: #888; font-size: 0.85rem; }
+.spinner {
+display: inline-block;
+width: 22px; height: 22px;
+border: 3px solid #d0dff5;
+border-top-color: #1a56db;
+border-radius: 50%;
+animation: spin .7s linear infinite;
+vertical-align: middle;
+margin-right: 8px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.result-placeholder {
+text-align: center;
+padding: 30px 10px;
+color: #bbb;
+font-size: 0.88rem;
+}
+.result-placeholder img {
+display: block;
+margin: 0 auto 14px;
+width: 100%;
+max-width: 220px;
+border-radius: 8px;
+opacity: 0.55;
+}
+.kodepos-badge {
+background: #1a56db;
+color: white;
+border-radius: 8px;
+text-align: center;
+padding: 20px;
+margin-bottom: 16px;
+}
+.kodepos-badge .label { font-size: 0.78rem; opacity: .85; margin-bottom: 4px; }
+.kodepos-badge .kode  { font-size: 2.4rem; font-weight: 700; letter-spacing: .05em; }
+.info-list { list-style: none; }
+.info-list li {
+display: flex;
+justify-content: space-between;
+gap: 10px;
+padding: 9px 0;
+border-bottom: 1px solid #f0f4ff;
+font-size: 0.85rem;
+}
+.info-list li:last-child { border-bottom: none; }
+.info-list .key   { color: #777; white-space: nowrap; }
+.info-list .value { font-weight: 600; text-align: right; }
+.error-msg {
+background: #fde8e8;
+border-left: 4px solid #d9534f;
+border-radius: 4px;
+padding: 12px 14px;
+font-size: 0.84rem;
+color: #a42424;
+margin-top: 10px;
+}
+.result-list { list-style: none; margin-top: 6px; }
+.result-list li {
+padding: 10px 12px;
+border: 1.5px solid #d0dff5;
+border-radius: 6px;
+margin-bottom: 8px;
+cursor: pointer;
+font-size: 0.84rem;
+transition: background .15s;
+}
+.result-list li:hover { background: #e8f0fe; border-color: #1a56db; }
+.result-list .rl-kode { font-size: 1.1rem; font-weight: 700; color: #1a56db; }
+.result-list .rl-area { color: #555; font-size: 0.8rem; margin-top: 2px; }
+</style>
+</head>
+<body>
+<div class="topbar">
+<img src="assets/logoITS.png" alt="Logo ITS" onerror="this.style.display='none'"/>
+<div class="topbar-text">
+<h1>Institut Teknologi Sepuluh Nopember</h1>
+<span>Sistem Informasi Akademik</span>
+</div>
+<a href="index.html" class="topbar-back">�� Beranda</a>
+</div>
+<div class="page">
+<p class="page-title"> Pencarian Kode Pos Indonesia</p>
+<p class="page-sub">Pilih wilayah secara bertahap untuk menemukan kode pos yang tepat.</p>
+<div class="main-layout">
+<div class="col-form">
+<div class="card">
+<p class="card-title"> Filter Wilayah</p>
+<div class="form-group">
+<label for="selProvinsi">Provinsi</label>
+<select id="selProvinsi">
+<option value="">-- Memuat provinsi... --</option>
+</select>
+</div>
+<div class="form-group">
+<label for="selKabupaten">Kabupaten / Kota</label>
+<select id="selKabupaten" disabled>
+<option value="">-- Pilih Provinsi dulu --</option>
+</select>
+</div>
+<div class="form-group">
+<label for="selKecamatan">Kecamatan</label>
+<select id="selKecamatan" disabled>
+<option value="">-- Pilih Kab/Kota dulu --</option>
+</select>
+</div>
+<button class="btn" id="btnCari" disabled>Cari Kode Pos</button>
+<button class="btn btn-outline" id="btnReset">Reset</button>
+</div>
+</div>
+<div class="col-result">
+<div class="card">
+<p class="card-title"> Hasil Pencarian</p>
+<div id="resultArea">
+<div class="result-placeholder">
+<img src="assets/peta_indonesia.png" alt="Peta Indonesia"
+onerror="this.style.display='none'"/>
+Pilih wilayah untuk menampilkan kode pos.
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+const WILAYAH_BASES = [
+'https://emsifa.github.io/api-wilayah-indonesia/api',
+'https://www.emsifa.com/api-wilayah-indonesia/api'
+];
+const KODEPOS_BASE = 'https://kodepos.vercel.app/search/';
+const selProvinsi  = document.getElementById('selProvinsi');
+const selKabupaten = document.getElementById('selKabupaten');
+const selKecamatan = document.getElementById('selKecamatan');
+const btnCari      = document.getElementById('btnCari');
+const resultArea   = document.getElementById('resultArea');
+function setLoading(sel, msg) {
+sel.innerHTML = `<option value="">${msg}</option>`;
+sel.disabled = true;
+}
+function showSpinner() {
+resultArea.innerHTML = `
+<div class="spinner-wrap">
+<span class="spinner"></span> Mencari kode pos...
+</div>`;
+}
+function showError(msg) {
+resultArea.innerHTML = `<div class="error-msg"> ${msg}</div>`;
+}
+async function fetchWilayahJson(path) {
+let lastErr;
+for (const base of WILAYAH_BASES) {
+try {
+const res = await fetch(`${base}/${path}`);
+if (!res.ok) throw new Error(`HTTP ${res.status}`);
+return await res.json();
+} catch (err) {
+lastErr = err;
+}
+}
+throw lastErr || new Error('Gagal memuat data wilayah');
+}
+async function loadProvinsi() {
+try {
+const data = await fetchWilayahJson('provinces.json');
+selProvinsi.innerHTML = '<option value="">-- Pilih Provinsi --</option>' +
+data.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+selProvinsi.disabled = false;
+} catch {
+selProvinsi.innerHTML = '<option value="">Gagal memuat � coba refresh</option>';
+}
+}
+async function loadKabupaten(provId) {
+setLoading(selKabupaten, 'Memuat kabupaten/kota...');
+setLoading(selKecamatan, '-- Pilih Kab/Kota dulu --');
+btnCari.disabled = true;
+try {
+const data = await fetchWilayahJson(`regencies/${provId}.json`);
+selKabupaten.innerHTML = '<option value="">-- Pilih Kabupaten/Kota --</option>' +
+data.map(k => `<option value="${k.id}">${k.name}</option>`).join('');
+selKabupaten.disabled = false;
+} catch {
+selKabupaten.innerHTML = '<option value="">Gagal memuat</option>';
+}
+}
+async function loadKecamatan(kabId) {
+setLoading(selKecamatan, 'Memuat kecamatan...');
+btnCari.disabled = true;
+try {
+const data = await fetchWilayahJson(`districts/${kabId}.json`);
+selKecamatan.innerHTML = '<option value="">-- Pilih Kecamatan --</option>' +
+data.map(k => `<option value="${k.id}" data-name="${k.name}">${k.name}</option>`).join('');
+selKecamatan.disabled = false;
+} catch {
+selKecamatan.innerHTML = '<option value="">Gagal memuat</option>';
+}
+}
+selProvinsi.addEventListener('change', function () {
+if (this.value) loadKabupaten(this.value);
+else {
+setLoading(selKabupaten, '-- Pilih Provinsi dulu --');
+setLoading(selKecamatan, '-- Pilih Kab/Kota dulu --');
+btnCari.disabled = true;
+}
+resetResult();
+});
+selKabupaten.addEventListener('change', function () {
+if (this.value) loadKecamatan(this.value);
+else {
+setLoading(selKecamatan, '-- Pilih Kab/Kota dulu --');
+btnCari.disabled = true;
+}
+resetResult();
+});
+selKecamatan.addEventListener('change', function () {
+btnCari.disabled = !this.value;
+resetResult();
+});
+btnCari.addEventListener('click', async () => {
+const kecOpt   = selKecamatan.options[selKecamatan.selectedIndex];
+const kabOpt   = selKabupaten.options[selKabupaten.selectedIndex];
+const provOpt  = selProvinsi.options[selProvinsi.selectedIndex];
+const kecNama  = kecOpt?.dataset?.name || kecOpt?.text || '';
+const kabNama  = kabOpt?.text || '';
+const provNama = provOpt?.text || '';
+if (!kecNama) return;
+showSpinner();
+try {
+const q   = encodeURIComponent(kecNama);
+const res = await fetch(`${KODEPOS_BASE}?q=${q}`);
+const json = await res.json();
+const items = Array.isArray(json) ? json : (json.data || []);
+if (!items.length) {
+showError('Kode pos tidak ditemukan untuk wilayah ini. Coba variasi nama kecamatan.');
+return;
+}
+const kabKey = kabNama.replace(/^(KAB\. |KOTA |KABUPATEN )/i, '').toLowerCase();
+let filtered = items.filter(it =>
+(it.kabupaten || it.kota || '').toLowerCase().includes(kabKey)
+);
+if (!filtered.length) filtered = items;
+if (filtered.length === 1) {
+renderSingleResult(filtered[0], provNama, kabNama);
+} else {
+renderMultipleResults(filtered, provNama, kabNama);
+}
+} catch (e) {
+showError('Terjadi kesalahan saat mengambil data. Periksa koneksi internet Anda.');
+console.error(e);
+}
+});
+function renderSingleResult(item, prov, kab) {
+const kodepos   = item.kodepos   || item.kode_pos || '�';
+const kelurahan = item.kelurahan || item.desa     || '�';
+const kecamatan = item.kecamatan || '�';
+const kabupaten = item.kabupaten || item.kota     || kab;
+const provinsi  = item.propinsi  || item.provinsi || prov;
+resultArea.innerHTML = `
+<div class="kodepos-badge">
+<div class="label">Kode Pos</div>
+<div class="kode">${kodepos}</div>
+</div>
+<ul class="info-list">
+<li><span class="key">Kelurahan / Desa</span><span class="value">${kelurahan}</span></li>
+<li><span class="key">Kecamatan</span><span class="value">${kecamatan}</span></li>
+<li><span class="key">Kabupaten / Kota</span><span class="value">${kabupaten}</span></li>
+<li><span class="key">Provinsi</span><span class="value">${provinsi}</span></li>
+</ul>`;
+}
+function renderMultipleResults(items, prov, kab) {
+const listHtml = items.slice(0, 12).map(item => {
+const kodepos   = item.kodepos   || item.kode_pos || '�';
+const kelurahan = item.kelurahan || item.desa     || '�';
+const kecamatan = item.kecamatan || '�';
+const kabupaten = item.kabupaten || item.kota     || kab;
+return `
+<li onclick='selectResult(${JSON.stringify(item)}, ${JSON.stringify(prov)}, ${JSON.stringify(kab)})'>
+<div class="rl-kode">${kodepos}</div>
+<div class="rl-area">${kelurahan}, ${kecamatan}, ${kabupaten}</div>
+</li>`;
+}).join('');
+resultArea.innerHTML = `
+<p style="font-size:.82rem;color:#777;margin-bottom:8px;">
+Ditemukan <strong>${items.length}</strong> hasil. Klik untuk detail:
+</p>
+<ul class="result-list">${listHtml}</ul>`;
+}
+function selectResult(item, prov, kab) {
+renderSingleResult(item, prov, kab);
+}
+document.getElementById('btnReset').addEventListener('click', () => {
+selProvinsi.value = '';
+setLoading(selKabupaten, '-- Pilih Provinsi dulu --');
+setLoading(selKecamatan, '-- Pilih Kab/Kota dulu --');
+btnCari.disabled = true;
+resetResult();
+});
+function resetResult() {
+resultArea.innerHTML = `
+<div class="result-placeholder">
+<img src="assets/peta_indonesia.png" alt="Peta Indonesia"
+onerror="this.style.display='none'"/>
+Pilih wilayah untuk menampilkan kode pos.
+</div>`;
+}
+loadProvinsi();
+</script>
+</body>
+</html>

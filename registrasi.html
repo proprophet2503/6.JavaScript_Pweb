@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Registrasi Mata Kuliah Ä ITS</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+background: #f0f4ff;
+color: #1a1a2e;
+min-height: 100vh;
+}
+.topbar {
+background: #1a56db;
+color: white;
+padding: 12px 28px;
+display: flex;
+align-items: center;
+gap: 14px;
+box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+}
+.topbar img { height: 42px; }
+.topbar-text h1  { font-size: 1.05rem; font-weight: 700; }
+.topbar-text span{ font-size: 0.82rem; opacity: 0.85; }
+.topbar-back {
+margin-left: auto;
+color: white;
+text-decoration: none;
+font-size: 0.85rem;
+opacity: .85;
+}
+.topbar-back:hover { opacity: 1; text-decoration: underline; }
+.page { max-width: 640px; margin: 40px auto 60px; padding: 0 20px; }
+.page-title {
+font-size: 1.3rem;
+font-weight: 700;
+color: #1a56db;
+margin-bottom: 6px;
+}
+.page-sub { font-size: 0.85rem; color: #666; margin-bottom: 28px; }
+.card {
+background: white;
+border: 1.5px solid #d0dff5;
+border-radius: 10px;
+padding: 28px 26px;
+}
+.form-group { margin-bottom: 20px; position: relative; }
+label {
+display: block;
+font-size: 0.85rem;
+font-weight: 600;
+color: #333;
+margin-bottom: 6px;
+}
+label span.required { color: #d9534f; margin-left: 2px; }
+input, select {
+width: 100%;
+padding: 9px 12px;
+border: 1.5px solid #c5d5f0;
+border-radius: 6px;
+font-size: 0.92rem;
+color: #1a1a2e;
+background: white;
+outline: none;
+transition: border-color .2s;
+}
+input:focus, select:focus { border-color: #1a56db; }
+input:disabled { background: #f5f8ff; color: #666; cursor: not-allowed; }
+.autocomplete-list {
+position: absolute;
+top: 100%;
+left: 0; right: 0;
+background: white;
+border: 1.5px solid #c5d5f0;
+border-top: none;
+border-radius: 0 0 6px 6px;
+max-height: 200px;
+overflow-y: auto;
+z-index: 100;
+box-shadow: 0 4px 12px rgba(0,0,0,.08);
+}
+.autocomplete-list li {
+list-style: none;
+padding: 9px 12px;
+font-size: 0.88rem;
+cursor: pointer;
+border-bottom: 1px solid #f0f0f0;
+}
+.autocomplete-list li:last-child { border-bottom: none; }
+.autocomplete-list li:hover,
+.autocomplete-list li.active { background: #e8f0fe; }
+.autocomplete-list li mark {
+background: none;
+color: #1a56db;
+font-weight: 700;
+}
+.autocomplete-list.hidden { display: none; }
+.info-box {
+background: #e8f0fe;
+border-left: 4px solid #1a56db;
+border-radius: 4px;
+padding: 12px 14px;
+font-size: 0.83rem;
+color: #1a3a7a;
+margin-bottom: 22px;
+line-height: 1.55;
+}
+.divider {
+border: none;
+border-top: 1px solid #e5eaf5;
+margin: 22px 0;
+}
+.section-label {
+font-size: 0.78rem;
+font-weight: 700;
+text-transform: uppercase;
+letter-spacing: .06em;
+color: #1a56db;
+margin-bottom: 16px;
+}
+.btn-row { display: flex; gap: 12px; margin-top: 26px; }
+.btn {
+padding: 10px 26px;
+border-radius: 6px;
+font-size: 0.9rem;
+font-weight: 600;
+cursor: pointer;
+border: none;
+transition: background .2s;
+}
+.btn-primary { background: #1a56db; color: white; }
+.btn-primary:hover { background: #1346b8; }
+.btn-secondary {
+background: white;
+color: #1a56db;
+border: 1.5px solid #1a56db;
+}
+.btn-secondary:hover { background: #e8f0fe; }
+#toast {
+position: fixed;
+bottom: 28px; right: 28px;
+background: #1a56db;
+color: white;
+padding: 13px 20px;
+border-radius: 8px;
+font-size: 0.88rem;
+box-shadow: 0 4px 14px rgba(0,0,0,.18);
+opacity: 0;
+transform: translateY(10px);
+transition: opacity .3s, transform .3s;
+pointer-events: none;
+z-index: 999;
+}
+#toast.show { opacity: 1; transform: translateY(0); }
+.table-section { margin-top: 36px; }
+.table-section h3 { font-size: 1rem; color: #1a56db; font-weight: 700; margin-bottom: 12px; }
+table {
+width: 100%;
+border-collapse: collapse;
+font-size: 0.85rem;
+background: white;
+border: 1.5px solid #d0dff5;
+border-radius: 8px;
+overflow: hidden;
+}
+thead { background: #1a56db; color: white; }
+th, td { padding: 10px 14px; text-align: left; }
+tbody tr:nth-child(even) { background: #f5f8ff; }
+tbody tr:hover { background: #e8f0fe; }
+td.no-data { text-align: center; color: #999; font-style: italic; }
+.del-btn {
+background: none;
+border: 1px solid #d9534f;
+color: #d9534f;
+border-radius: 4px;
+padding: 3px 9px;
+font-size: 0.78rem;
+cursor: pointer;
+}
+.del-btn:hover { background: #fde8e8; }
+</style>
+</head>
+<body>
+<div class="topbar">
+<img src="assets/logoITS.png" alt="Logo ITS" onerror="this.style.display='none'"/>
+<div class="topbar-text">
+<h1>Institut Teknologi Sepuluh Nopember</h1>
+<span>Sistem Informasi Akademik</span>
+</div>
+<a href="index.html" class="topbar-back">Üê Beranda</a>
+</div>
+<div class="page">
+<p class="page-title">Registrasi Mata Kuliah</p>
+<p class="page-sub">Isi formulir di bawah untuk mendaftarkan mata kuliah semester ini.</p>
+<div class="card">
+<div class="info-box">
+ Ketik nama mahasiswa untuk mendapatkan rekomendasi otomatis. Pilih mata kuliah
+untuk menampilkan dosen secara otomatis.
+</div>
+<p class="section-label">Data Mahasiswa</p>
+<div class="form-group" id="namaGroup">
+<label for="nama">Nama Mahasiswa <span class="required">*</span></label>
+<input type="text" id="nama" placeholder="Mulai ketik nama..." autocomplete="off"/>
+<ul class="autocomplete-list hidden" id="namaList"></ul>
+</div>
+<div class="form-group">
+<label for="nim">NIM <span class="required">*</span></label>
+<input type="text" id="nim" placeholder="cth. 5026221001" maxlength="13"
+pattern="[0-9]+" title="NIM hanya berisi angka"/>
+</div>
+<hr class="divider"/>
+<p class="section-label">Data Akademik</p>
+<div class="form-group">
+<label for="matkul">Mata Kuliah <span class="required">*</span></label>
+<select id="matkul">
+<option value="">-- Pilih Mata Kuliah --</option>
+<optgroup label="Departemen Informatika">
+<option value="IF2110">IF2110 Ä Algoritma dan Struktur Data</option>
+<option value="IF2120">IF2120 Ä Matematika Diskrit</option>
+<option value="IF3110">IF3110 Ä Pengembangan Aplikasi Berbasis Web</option>
+<option value="IF3140">IF3140 Ä Manajemen Basis Data</option>
+<option value="IF4020">IF4020 Ä Kriptografi</option>
+</optgroup>
+<optgroup label="Departemen Sistem Informasi">
+<option value="IS2001">IS2001 Ä Analisis dan Desain Sistem</option>
+<option value="IS2003">IS2003 Ä Pemrograman Berbasis Objek</option>
+<option value="IS3050">IS3050 Ä Manajemen Proyek TI</option>
+<option value="IS4010">IS4010 Ä Kecerdasan Buatan</option>
+</optgroup>
+<optgroup label="Departemen Teknik Komputer">
+<option value="EC2110">EC2110 Ä Rangkaian Elektronika</option>
+<option value="EC3040">EC3040 Ä Arsitektur Komputer</option>
+<option value="EC4080">EC4080 Ä Embedded System</option>
+</optgroup>
+</select>
+</div>
+<div class="form-group">
+<label for="dosen">Dosen Pengampu</label>
+<input type="text" id="dosen" placeholder="Otomatis terisi saat mata kuliah dipilih" disabled/>
+</div>
+<div class="form-group">
+<label for="kelas">Kelas <span class="required">*</span></label>
+<select id="kelas">
+<option value="">-- Pilih Kelas --</option>
+<option value="A">Kelas A</option>
+<option value="B">Kelas B</option>
+<option value="C">Kelas C</option>
+<option value="D">Kelas D</option>
+</select>
+</div>
+<div class="btn-row">
+<button class="btn btn-primary" id="btnDaftar">Daftarkan</button>
+<button class="btn btn-secondary" id="btnReset">Reset</button>
+</div>
+</div>
+<div class="table-section">
+<h3> Daftar Registrasi</h3>
+<table id="tblRegistrasi">
+<thead>
+<tr>
+<th>#</th>
+<th>Nama</th>
+<th>NIM</th>
+<th>Mata Kuliah</th>
+<th>Dosen</th>
+<th>Kelas</th>
+<th></th>
+</tr>
+</thead>
+<tbody id="tblBody">
+<tr><td class="no-data" colspan="7">Belum ada data registrasi.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="toast"></div>
+<script src="script.js"></script>
+<script>
+const mahasiswaList = [
+"Ahmad Fauzi Pratama","Ahmad Rizky Maulana","Alya Nurdiana Safitri",
+"Ananda Putri Kusuma","Andi Permana Wijaya","Bagas Dwi Santoso",
+"Bima Arya Saputra","Citra Dewi Rahayu","Dafa Akbar Ramadhan",
+"Devi Anggraini Putri","Dian Puspita Sari","Dimas Fajar Nugroho",
+"Dwi Rahma Wulandari","Eka Prasetyo Nugroho","Elisa Tri Wahyuni",
+"Fajar Hidayat Maulana","Fani Kurnia Dewi","Farah Aulia Zahra",
+"Farhan Rizky Ananda","Fauzi Hakim Pratama","Fitriani Rahmawati",
+"Galih Prayogo Utama","Gilang Ramadhan Santoso","Habib Rizky Hakim",
+"Hanifah Nurul Izzah","Hendra Pratama Yudha","Ilham Kurniawan Putra",
+"Indah Permata Sari","Intan Ayu Lestari","Irfan Maulana Akbar",
+"Jessica Amalia Putri","Khoirunnisa Ayu Pratiwi","Latifah Nurul Hidayah",
+"Luthfi Ardiansyah Putra","Maulana Yusuf Ibrahim","Muhammad Iqbal Firdaus",
+"Muhammad Arif Wibowo","Muhammad Farhan Ghifari","Muhammad Hafiz Akbar",
+"Nadia Kusuma Wardani","Naufal Rizky Pratama","Nisa Aulia Rahmadhani",
+"Nur Aini Rahmawati","Nurul Hidayah Pratiwi","Pandu Wijaya Kusuma",
+"Putri Amalia Rahma","Rachma Fitriani Dewi","Rafi Ahmad Saputra",
+"Rahmat Hidayatullah","Raka Pratama Nugroho","Reza Firmansyah Putra",
+"Rizal Kurniawan Santoso","Rizky Aditya Pratama","Rizky Fajar Nugroho",
+"Salsabila Putri Rahma","Sandi Putra Permana","Satria Eka Wibawa",
+"Silvia Rahmawati Dewi","Taufik Hidayat Ramadhan","Tri Wahyu Prasetyo",
+"Umar Faruq Abdullah","Vina Rahmadani Putri","Wahyu Adi Pratama",
+"Wulandari Kusuma Dewi","Yoga Dwi Santoso","Yusuf Hakim Maulana",
+"Zahra Aulia Ramadhani","Zaki Fadillah Rahman"
+];
+const dosenMap = {
+IF2110: "Dr. Ir. Rully Soelaiman, M.Kom.",
+IF2120: "Prof. Ir. Tohari Ahmad, M.Sc., Ph.D.",
+IF3110: "Dr. Yudhi Purwananto, M.Kom.",
+IF3140: "Dr. Eng. Radityo Anggoro, S.Kom., M.Sc.",
+IF4020: "Dr. Ary Mazharuddin Shiddiqi, S.Kom., M.Comp.Sc.",
+IS2001: "Dr. Erma Suryani, S.T., M.T.",
+IS2003: "Dr. Tony Dwi Susanto, S.T., M.T.",
+IS3050: "Mahendrawathi ER, S.T., M.Sc., Ph.D.",
+IS4010: "Dr. Nisfu Asrul Sani, S.Kom., M.Sc.",
+EC2110: "Dr. Ir. Achmad Arifin, M.Eng.",
+EC3040: "Dr. Ir. Eko Mulyanto Yuniarno, M.Eng.",
+EC4080: "Dr. Anang Tjahjono, S.T., M.T."
+};
+let registrasiData = [];
+const namaInput = document.getElementById('nama');
+const namaList  = document.getElementById('namaList');
+let activeIdx   = -1;
+namaInput.addEventListener('input', function () {
+const q = this.value.trim().toLowerCase();
+namaList.innerHTML = '';
+activeIdx = -1;
+if (!q) { namaList.classList.add('hidden'); return; }
+const matches = mahasiswaList.filter(n => n.toLowerCase().includes(q)).slice(0, 8);
+if (!matches.length) { namaList.classList.add('hidden'); return; }
+matches.forEach((name, i) => {
+const li = document.createElement('li');
+const re  = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
+li.innerHTML = name.replace(re, '<mark>$1</mark>');
+li.addEventListener('mousedown', () => {
+namaInput.value = name;
+namaList.classList.add('hidden');
+});
+namaList.appendChild(li);
+});
+namaList.classList.remove('hidden');
+});
+namaInput.addEventListener('keydown', function (e) {
+const items = namaList.querySelectorAll('li');
+if (!items.length) return;
+if (e.key === 'ArrowDown') {
+e.preventDefault();
+activeIdx = Math.min(activeIdx + 1, items.length - 1);
+} else if (e.key === 'ArrowUp') {
+e.preventDefault();
+activeIdx = Math.max(activeIdx - 1, -1);
+} else if (e.key === 'Enter' && activeIdx >= 0) {
+e.preventDefault();
+namaInput.value = items[activeIdx].textContent;
+namaList.classList.add('hidden');
+return;
+} else if (e.key === 'Escape') {
+namaList.classList.add('hidden'); return;
+}
+items.forEach((li, i) => li.classList.toggle('active', i === activeIdx));
+if (activeIdx >= 0) items[activeIdx].scrollIntoView({ block: 'nearest' });
+});
+document.addEventListener('click', (e) => {
+if (!document.getElementById('namaGroup').contains(e.target))
+namaList.classList.add('hidden');
+});
+document.getElementById('matkul').addEventListener('change', function () {
+const dosen = dosenMap[this.value] || '';
+const dosenInput = document.getElementById('dosen');
+dosenInput.value = dosen;
+dosenInput.style.color = dosen ? '#1a1a2e' : '';
+});
+document.getElementById('btnDaftar').addEventListener('click', () => {
+const nama   = namaInput.value.trim();
+const nim    = document.getElementById('nim').value.trim();
+const matkul = document.getElementById('matkul');
+const dosen  = document.getElementById('dosen').value;
+const kelas  = document.getElementById('kelas').value;
+if (!nama || !nim || !matkul.value || !kelas) {
+showToast(' Harap lengkapi semua field yang wajib diisi.', '#d9534f');
+return;
+}
+if (!/^\d+$/.test(nim)) {
+showToast(' NIM hanya boleh berisi angka.', '#d9534f');
+return;
+}
+const entry = {
+id: Date.now(),
+nama, nim,
+matkul: matkul.options[matkul.selectedIndex].text,
+dosen, kelas
+};
+registrasiData.push(entry);
+renderTable();
+resetForm();
+showToast(' Registrasi berhasil ditambahkan!');
+});
+document.getElementById('btnReset').addEventListener('click', resetForm);
+function resetForm() {
+namaInput.value = '';
+document.getElementById('nim').value    = '';
+document.getElementById('matkul').value = '';
+document.getElementById('dosen').value  = '';
+document.getElementById('kelas').value  = '';
+namaList.classList.add('hidden');
+}
+function renderTable() {
+const tbody = document.getElementById('tblBody');
+if (!registrasiData.length) {
+tbody.innerHTML = '<tr><td class="no-data" colspan="7">Belum ada data registrasi.</td></tr>';
+return;
+}
+tbody.innerHTML = registrasiData.map((r, i) => `
+<tr>
+<td>${i + 1}</td>
+<td>${r.nama}</td>
+<td>${r.nim}</td>
+<td>${r.matkul}</td>
+<td>${r.dosen || 'Ä'}</td>
+<td>${r.kelas}</td>
+<td><button class="del-btn" onclick="hapus(${r.id})">Hapus</button></td>
+</tr>
+`).join('');
+}
+function hapus(id) {
+registrasiData = registrasiData.filter(r => r.id !== id);
+renderTable();
+showToast(' Data dihapus.');
+}
+function showToast(msg, bg = '#1a56db') {
+const t = document.getElementById('toast');
+t.textContent = msg;
+t.style.background = bg;
+t.classList.add('show');
+setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
