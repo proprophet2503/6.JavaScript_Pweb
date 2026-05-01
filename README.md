@@ -51,25 +51,6 @@ Kedua API bersifat **gratis dan publik**, tidak memerlukan API key.
 
 ---
 
-## Instruksi Download Assets
-
-### logoITS.png
-1. Kunjungi: **https://www.its.ac.id** atau cari "logo ITS" di Google Images
-2. Atau unduh langsung dari sumber resmi ITS
-3. Simpan sebagai `assets/logoITS.png`
-4. Ukuran yang direkomendasikan: **±200×80 px** (landscape), format PNG transparan
-
-### peta_indonesia.png
-1. Cari di Google Images: `"peta Indonesia" filetype:png`
-2. Pilih gambar berlisensi bebas (misalnya dari Wikipedia Commons)
-3. Link contoh Wikipedia: https://commons.wikimedia.org/wiki/File:Indonesia_(orthographic_projection).svg
-4. Simpan sebagai `assets/peta_indonesia.png`
-5. Ukuran yang direkomendasikan: **±600×300 px**
-
-> **Catatan**: Jika file gambar tidak ditemukan, halaman tetap berfungsi normal – gambar hanya akan disembunyikan otomatis.
-
----
-
 ## Teknologi
 
 - HTML5 + CSS3 (tanpa framework)
